@@ -58,7 +58,7 @@ class BlogService {
           query.isFeatured = true;
         }
 
-        const posts = await blogs
+        const blog = await blogs
           .find(query)
           .populate("user", "username")
           .sort(sortObj)
@@ -102,13 +102,13 @@ class BlogService {
       }
       let slug = blogData.title.replace(/ /g, "-").toLowerCase();
 
-      let existingPost = await blogs.findOne({ slug });
+      let existingBlogs = await blogs.findOne({ slug });
 
       let counter = 2;
 
-      while (existingPost) {
+      while (existingBlogs) {
         slug = `${slug}-${counter}`;
-        existingPost = await blogs.findOne({ slug });
+        existingBlogs = await blogs.findOne({ slug });
         counter++;
       }
 
@@ -134,7 +134,11 @@ class BlogService {
         user: userId,
       });
       if (!blog) {
-        return { success: false, data: null, error: "Blog not found" };
+        return {
+          success: false,
+          data: null,
+          error: "You can delete only your blogs",
+        };
       }
 
       return { success: true, data: blog, error: null };
