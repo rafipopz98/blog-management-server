@@ -15,6 +15,7 @@ export const BlogApi = (app: Application, BS: BlogService) => {
   blogRouter.get("/get-featured", BC.getFeaturedPost);
   blogRouter.get("/get/:id", BC.getBlog);
   blogRouter.post("/create", auth, BC.CreateBlog);
+  blogRouter.patch("/update", auth, BC.UpdateBlog);
   blogRouter.delete("/delete/:id", auth, BC.deleteBlog);
   blogRouter.patch("/feature", isAdmin, BC.featureBlog);
   blogRouter.get("/get-profile", auth, BC.getUserProfile);

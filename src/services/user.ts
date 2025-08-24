@@ -112,13 +112,19 @@ class UserService {
       if (!compareOldPassword) {
         return {
           success: false,
-          data: null,
+          data: "Old password is incorrect",
           error: "Old password is incorrect",
         };
       }
       const newHashedPassword = hashPassword({ password: newPassword });
-      user.password = newHashedPassword;
-      await user.save();
+      const updatedUser = await User.findByIdAndUpdate(
+        {
+          _id: userId,
+        },
+        {
+          password: newHashedPassword,
+        }
+      );
       return { success: true, data: null, error: null };
     } catch (error) {
       console.error("Error in resetPassword:", error);
@@ -134,6 +140,11 @@ class UserService {
     username: string;
   }) {
     try {
+      const existingUsername = await User.findById(username);
+      if (existingUsername) {
+        return { success: false, data: null, error: "Username already exists" };
+      }
+
       const user = await User.findByIdAndUpdate(
         {
           _id: userId,

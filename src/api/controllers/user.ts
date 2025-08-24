@@ -83,6 +83,9 @@ class userController {
       newPassword,
       userId,
     });
+    console.log(data);
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data);
   }
   public async Logout(req: Request, res: Response) {
     res

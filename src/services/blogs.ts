@@ -137,6 +137,44 @@ class BlogService {
     }
   }
 
+  async updateBlog(blogData: {
+    id: string;
+    title?: string;
+    desc?: string;
+    category?: string;
+    role: string;
+    userId: string;
+  }) {
+    try {
+      const { id, title, desc, category, role, userId } = blogData;
+
+      const query = role === "admin" ? { _id: id } : { _id: id, user: userId };
+      const blog = await blogs.findOne(query);
+
+      if (!blog) {
+        return {
+          success: false,
+          data: null,
+          error: "Blog not found or access denied",
+        };
+      }
+      const updatedData = {
+        title: title ?? blog.title,
+        desc: desc ?? blog.desc,
+        category: category ?? blog.category,
+      };
+
+      const updatedBlog = await blogs.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+
+      return { success: true, data: updatedBlog, error: null };
+    } catch (error) {
+      console.error("Error updating blog:", error);
+      return { success: false, data: null, error: "Failed to update blog" };
+    }
+  }
+
   async deleteBlog(id: string, role: string, userId: string) {
     try {
       if (role === "admin") {

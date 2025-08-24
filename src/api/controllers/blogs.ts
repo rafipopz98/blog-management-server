@@ -15,6 +15,7 @@ class BlogController {
     this.getFeaturedPost = this.getFeaturedPost.bind(this);
     this.getUserProfile = this.getUserProfile.bind(this);
     this.getUserBlogs = this.getUserBlogs.bind(this);
+    this.UpdateBlog = this.UpdateBlog.bind(this);
   }
 
   public async getAllBlogs(req: Request, res: Response) {
@@ -55,6 +56,24 @@ class BlogController {
       title,
       desc,
       category,
+      userId,
+    });
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data?.data);
+  }
+
+  async UpdateBlog(req: Request, res: Response) {
+    const { userId, role } = req.user;
+    const { id, title, desc, category } = req.body;
+    if (!id) {
+      return res.status(400).json({ error: "Blog ID is required" });
+    }
+    const data = await this.blogService.updateBlog({
+      id,
+      title,
+      desc,
+      category,
+      role,
       userId,
     });
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
