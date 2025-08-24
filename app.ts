@@ -14,7 +14,11 @@ import { BlogApi } from "./src/api/routes/blogs";
 const ExpressApp = (app: Application, server: http.Server) => {
   app.use(
     cors({
-      origin: "https://rafi-blog-management.vercel.app",
+      origin: [
+        "http://localhost:3000",
+        "https://rafi-blog-management.vercel.app",
+      ],
+      methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
       credentials: true,
     })
   );

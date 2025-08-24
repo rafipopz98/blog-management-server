@@ -210,6 +210,7 @@ class UserService {
   }) {
     try {
       const { SignJWT } = await import("jose");
+      console.log(JWT_SECRET,'JWT_SECRET')
       const token = await new SignJWT({ userId, username, email, role })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
