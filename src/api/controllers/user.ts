@@ -11,6 +11,10 @@ class userController {
 
   constructor(US: UserService) {
     this.userService = US;
+    this.userRegister = this.userRegister.bind(this);
+    this.userLogin = this.userLogin.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
+    this.Logout = this.Logout.bind(this);
   }
 
   public async userRegister(req: Request, res: Response) {

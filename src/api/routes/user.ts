@@ -1,6 +1,7 @@
 import Router, { Application } from "express";
 import { userController } from "../controllers/user";
 import { UserService } from "../../services/user";
+import { auth } from "../middleware/authUser";
 
 declare global {
   namespace Express {
@@ -17,7 +18,7 @@ export const UserApi = (app: Application, US: UserService) => {
 
   app.post("/login", UC.userLogin);
   app.post("/register", UC.userRegister);
-  app.post("/reset-password", UC.resetPassword);
+  app.post("/reset-password", auth, UC.resetPassword);
   app.post("/logout", UC.Logout);
 };
 
