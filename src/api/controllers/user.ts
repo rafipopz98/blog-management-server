@@ -16,6 +16,8 @@ class userController {
     this.userLogin = this.userLogin.bind(this);
     this.resetPassword = this.resetPassword.bind(this);
     this.Logout = this.Logout.bind(this);
+    this.getUserProfile = this.getUserProfile.bind(this);
+    this.updateProfile = this.updateProfile.bind(this);
   }
 
   public async userRegister(req: Request, res: Response) {

@@ -17,6 +17,8 @@ export const BlogApi = (app: Application, BS: BlogService) => {
   blogRouter.post("/create", auth, BC.CreateBlog);
   blogRouter.delete("/delete/:id", auth, BC.deleteBlog);
   blogRouter.patch("/feature", isAdmin, BC.featureBlog);
+  blogRouter.get("/get-profile", auth, BC.getUserProfile);
+  blogRouter.get("/get-user-blogs", auth, BC.getUserBlogs);
 
   app.use("/blogs", blogRouter);
 };

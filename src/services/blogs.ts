@@ -36,7 +36,6 @@ class BlogService {
       const totalBlogs = await blogs.countDocuments(query);
 
       const hasMore = skipNumber + limitNumber < totalBlogs;
-      console.log(hasMore, "hasmore");
 
       return {
         success: true,
@@ -137,6 +136,44 @@ class BlogService {
     } catch (error) {
       console.log("Error featuring blog:", error);
       return { success: false, data: null, error: "Failed to feature blog" };
+    }
+  }
+
+  async getUserProfileInfo(userId: string) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return { success: true, data: null, error: null };
+      }
+      const finalData = {
+        username: user.username,
+        email: user.email,
+        id: user._id,
+      };
+      return { success: true, data: finalData, error: null };
+    } catch (error) {
+      console.log("Error fetching user profile info:", error);
+      return {
+        success: false,
+        data: null,
+        error: "Failed to fetch user profile info",
+      };
+    }
+  }
+
+  async getUserAllBlogs(userId: string) {
+    try {
+      const allBlogs = await blogs
+        .find({ user: userId })
+        .sort({ createdAt: -1 });
+      return { success: true, data: allBlogs, error: null };
+    } catch (error) {
+      console.log("Error fetching user profile info:", error);
+      return {
+        success: false,
+        data: null,
+        error: "Failed to fetch user profile info",
+      };
     }
   }
 }
