@@ -196,7 +196,7 @@ class UserService {
     }
   }
 
-  async CreateAuthIDs({
+  private async CreateAuthIDs({
     userId,
     username,
     email,
@@ -210,7 +210,8 @@ class UserService {
     expires: string;
   }) {
     try {
-      const { SignJWT } = await import("jose");
+      const jose = await import("jose");
+      const { SignJWT } = jose;
       const token = await new SignJWT({ userId, username, email, role })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
