@@ -7,33 +7,74 @@ class BlogService {
       const skipNumber = Number(params.skip) || 0;
       const limitNumber = Number(params.limit) || 2;
 
-      const query: any = {};
+      const pipeline: any[] = [];
 
-      if (params.category) query.category = params.category;
-      if (params.searchQuery)
-        query.title = { $regex: params.searchQuery, $options: "i" };
+      pipeline.push({
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        },
+      });
 
-      if (params.author) {
-        const user = await User.findOne({ username: params.author }).select(
-          "_id"
-        );
-        if (!user)
-          return {
-            success: true,
-            data: { data: [], hasMore: false, total: 0 },
-            error: null,
-          };
-        query.user = user._id;
+      pipeline.push({
+        $unwind: "$user",
+      });
+
+      const match: any = {};
+
+      if (params.category) {
+        match.category = params.category;
       }
 
-      const blog = await blogs
-        .find(query)
-        .populate("user", "username")
-        .limit(limitNumber)
-        .skip(skipNumber)
-        .sort({ createdAt: -1 });
+      if (params.searchQuery) {
+        const regex = { $regex: params.searchQuery, $options: "i" };
+        match.$or = [
+          { title: regex },
+          { category: regex },
+          { "user.username": regex },
+          { "user.email": regex },
+        ];
+      }
 
-      const totalBlogs = await blogs.countDocuments(query);
+      if (Object.keys(match).length > 0) {
+        pipeline.push({ $match: match });
+      }
+
+      let sort: any = { createdAt: -1 };
+      if (params.sortQuery) {
+        const order = params.sortQuery === "asc" ? 1 : -1;
+        sort = { createdAt: order };
+      }
+      pipeline.push({ $sort: sort });
+
+      pipeline.push({ $skip: skipNumber });
+      pipeline.push({ $limit: limitNumber });
+
+      pipeline.push({
+        $project: {
+          title: 1,
+          desc: 1,
+          category: 1,
+          isFeatured: 1,
+          visit: 1,
+          createdAt: 1,
+          "user.username": 1,
+          "user.email": 1,
+        },
+      });
+
+      console.log(pipeline[3]);
+
+      const blog = await blogs.aggregate(pipeline);
+
+      const countPipeline = [...pipeline];
+      countPipeline.splice(
+        countPipeline.findIndex((stage) => stage.$skip !== undefined),
+        2
+      );
+      const totalBlogs = (await blogs.aggregate(countPipeline)).length;
 
       const hasMore = skipNumber + limitNumber < totalBlogs;
 
