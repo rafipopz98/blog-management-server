@@ -195,7 +195,7 @@ class UserService {
     }
   }
 
-  private async CreateAuthIDs({
+  async CreateAuthIDs({
     userId,
     username,
     email,
