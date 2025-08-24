@@ -1,4 +1,5 @@
 import Router, { Application } from "express";
+export const router = Router();
 import { userController } from "../controllers/user";
 import { UserService } from "../../services/user";
 import { auth } from "../middleware/authUser";
@@ -16,13 +17,15 @@ const userRouter = Router();
 export const UserApi = (app: Application, US: UserService) => {
   const UC = new userController(US);
 
-  app.post("/login", UC.userLogin);
-  app.post("/register", UC.userRegister);
-  app.post("/reset-password", auth, UC.resetPassword);
-  app.post("/logout", UC.Logout);
+  userRouter.post("/login", UC.userLogin);
+  userRouter.post("/register", UC.userRegister);
+  userRouter.post("/reset-password", auth, UC.resetPassword);
+  userRouter.post("/logout", UC.Logout);
 
-  app.get("/profile", auth, UC.getUserProfile);
-  app.post("/update/profile", auth, UC.updateProfile);
+  userRouter.get("/profile", auth, UC.getUserProfile);
+  userRouter.post("/update/profile", auth, UC.updateProfile);
+
+  app.use("/user", userRouter);
 };
 
 export default userRouter;

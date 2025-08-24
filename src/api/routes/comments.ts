@@ -8,7 +8,7 @@ import { CommentService } from "../../services/comment";
 
 const commentsRouter = Router();
 
-export const UserApi = (app: Application, CS: CommentService) => {
+export const CommentApi = (app: Application, CS: CommentService) => {
   const CC = new CommentController(CS);
 
   app.get("get-all/:blogId", CC.getBlogComments);

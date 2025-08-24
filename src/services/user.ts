@@ -35,7 +35,7 @@ class UserService {
         userID: savedUser._id.toString(),
         username: savedUser.username,
         email: savedUser.email,
-        role: "user",
+        role: savedUser.role,
         expires: "7d",
       });
 
@@ -43,6 +43,7 @@ class UserService {
         id: savedUser._id,
         username,
         email,
+        role: savedUser.role,
         token: (await tokenData).data,
       };
 
@@ -72,7 +73,7 @@ class UserService {
         userID: user._id.toString(),
         username: user.username,
         email: user.email,
-        role: "user",
+        role: user.role,
         expires: "7d",
       });
 
@@ -80,6 +81,7 @@ class UserService {
         id: user._id,
         username: user.username,
         email,
+        role: user.role,
         token: (await tokenData).data,
       };
 
@@ -149,6 +151,8 @@ class UserService {
         username: user.username,
         email: user.email,
         img_id: user.img_id,
+        role: user.role,
+        id: user._id,
       };
       return { success: true, data: finalData, error: null };
     } catch (error) {
@@ -167,6 +171,8 @@ class UserService {
         username: user.username,
         email: user.email,
         img_id: user.img_id,
+        role: user.role,
+        id: user._id,
       };
       return { success: true, data: finalData, error: null };
     } catch (error) {

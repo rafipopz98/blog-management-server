@@ -8,7 +8,7 @@ import { isAdmin } from "../middleware/isAdminUser";
 
 const blogRouter = Router();
 
-export const UserApi = (app: Application, BS: BlogService) => {
+export const BlogApi = (app: Application, BS: BlogService) => {
   const BC = new BlogController(BS);
 
   app.get("/get-all", BC.getAllBlogs);

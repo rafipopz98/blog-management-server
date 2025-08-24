@@ -34,7 +34,8 @@ class userController {
       password,
     });
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
-    res.cookie("accessUserToken", data.data?.finalData.token, {
+    console.log(data);
+    res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
     });
     return res.status(statusCode).json(data);
@@ -48,7 +49,7 @@ class userController {
     }
     const data: any = await this.userService.login({ email, password });
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
-    res.cookie("accessUserToken", data.data?.finalData.token, {
+    res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
     });
     return res.status(statusCode).json(data);
