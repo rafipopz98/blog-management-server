@@ -40,11 +40,11 @@ class userController {
     // res.cookie("accessUserToken", data.data?.token, {
     //   httpOnly: true,
     // });
-    res.cookie("accessUserToken", data.data?.token, {
+    res.cookie("accessUserToken", data?.data?.token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none", // prevent CSRF
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      sameSite: "none", // allows cross-origin
+      maxAge: 1000 * 60 * 60 * 24,
     });
     return res.status(statusCode).json(data);
   }
@@ -60,12 +60,13 @@ class userController {
     // res.cookie("accessUserToken", data.data?.token, {
     //   httpOnly: true,
     // });
-    res.cookie("accessUserToken", data.data?.token, {
+    res.cookie("accessUserToken", data?.data?.token, {
       httpOnly: true,
       secure: true,
-      sameSite: "none", // prevent CSRF
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      sameSite: "none", // allows cross-origin
+      maxAge: 1000 * 60 * 60 * 24,
     });
+
     return res.status(statusCode).json(data);
   }
   public async resetPassword(req: Request, res: Response) {
