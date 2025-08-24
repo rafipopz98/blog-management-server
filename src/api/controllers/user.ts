@@ -42,8 +42,8 @@ class userController {
     // });
     res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only https in prod
-      sameSite: "strict", // prevent CSRF
+      secure: true,
+      sameSite: "none", // prevent CSRF
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     return res.status(statusCode).json(data);
@@ -62,8 +62,8 @@ class userController {
     // });
     res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only https in prod
-      sameSite: "strict", // prevent CSRF
+      secure: true,
+      sameSite: "none", // prevent CSRF
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     return res.status(statusCode).json(data);
