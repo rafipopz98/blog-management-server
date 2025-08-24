@@ -1,5 +1,6 @@
-import { JWT_SECRET } from "../config/config";
+import { JWT_SECRET, JWT_TOKEN } from "../config/config";
 import { User } from "../db/model/user";
+import jwt from "jsonwebtoken";
 import { comparePassword, hashPassword } from "../lib/utils";
 
 class UserService {
@@ -201,7 +202,6 @@ class UserService {
     username,
     email,
     role,
-    expires,
   }: {
     userId: string;
     username: string;
@@ -210,13 +210,9 @@ class UserService {
     expires: string;
   }) {
     try {
-      const jose = await import("jose");
-      const { SignJWT } = jose;
-      const token = await new SignJWT({ userId, username, email, role })
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime(expires)
-        .sign(JWT_SECRET);
+      const token = jwt.sign({ userId, username, email, role }, JWT_TOKEN, {
+        expiresIn: "10h",
+      });
       return { success: true, data: token, error: null };
     } catch (error) {
       console.error("Error in CreateAuthIDs:", error);
