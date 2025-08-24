@@ -87,6 +87,7 @@ class UserService {
       };
 
       console.log(token, "token");
+      console.log("JWT_SECRET in prod:", JWT_SECRET);
 
       return { success: true, data: finalData, error: null };
     } catch (error) {
@@ -210,15 +211,14 @@ class UserService {
   }) {
     try {
       const { SignJWT } = await import("jose");
-      console.log(JWT_SECRET,'JWT_SECRET')
       const token = await new SignJWT({ userId, username, email, role })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime(expires)
         .sign(JWT_SECRET);
-      //
       return { success: true, data: token, error: null };
     } catch (error) {
+      console.error("Error in CreateAuthIDs:", error);
       return { success: false, data: null, error };
     }
   }
