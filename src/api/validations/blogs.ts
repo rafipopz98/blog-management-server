@@ -1,8 +1,8 @@
 import Joi from "joi";
 
 export const getAllBlogsValidations = Joi.object({
-  page: Joi.number().integer().min(1).optional(),
-  limit: Joi.number().integer().min(1).max(100).optional(),
+  skip: Joi.number().min(0).optional(),
+  limit: Joi.number().min(2).max(5).optional(),
   category: Joi.string().optional(),
   author: Joi.string().optional(),
   searchQuery: Joi.string().optional(),

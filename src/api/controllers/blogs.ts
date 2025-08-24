@@ -12,18 +12,21 @@ class BlogController {
     this.CreateBlog = this.CreateBlog.bind(this);
     this.deleteBlog = this.deleteBlog.bind(this);
     this.featureBlog = this.featureBlog.bind(this);
+    this.getFeaturedPost = this.getFeaturedPost.bind(this);
   }
 
   public async getAllBlogs(req: Request, res: Response) {
-    const { page, limit, category, author, searchQuery, sortQuery, featured } =
-      req.query;
-
     const { error, value } = getAllBlogsValidations.validate(req.query);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+    const data = await this.blogService.getAll(value);
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data?.data);
+  }
 
-    const data = await this.blogService.getAllBlogs({ value });
+  public async getFeaturedPost(req: Request, res: Response) {
+    const data = await this.blogService.getFeaturedBlogs();
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
     return res.status(statusCode).json(data?.data);
   }
@@ -39,14 +42,28 @@ class BlogController {
   }
 
   public async CreateBlog(req: Request, res: Response) {
-
+    const { title, desc, category } = req.body;
+    if (!title || !desc) {
+      return res
+        .status(400)
+        .json({ error: "Title and Description are required" });
+    }
+    const { userId } = req.user;
+    const data = await this.blogService.CreateBlog({
+      title,
+      desc,
+      category,
+      userId,
+    });
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data?.data);
   }
   public async deleteBlog(req: Request, res: Response) {
     const { id } = req.params;
     if (!id) {
       return res.status(400).json({ error: "Blog ID is required" });
     }
-    const {role, userId } = req.body;
+    const { role, userId } = req.body;
     const data = await this.blogService.deleteBlog(id, role, userId);
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
     return res.status(statusCode).json(data?.data);

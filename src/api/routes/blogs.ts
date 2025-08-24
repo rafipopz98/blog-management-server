@@ -11,11 +11,12 @@ const blogRouter = Router();
 export const BlogApi = (app: Application, BS: BlogService) => {
   const BC = new BlogController(BS);
 
-  app.get("/get-all", BC.getAllBlogs);
-  app.get("/get/:id", BC.getBlog);
-  app.post("/create", auth, BC.CreateBlog);
-  app.delete("/delete/:id", auth, BC.deleteBlog);
-  app.patch("/feature", isAdmin, BC.featureBlog);
+  blogRouter.get("/get-all", BC.getAllBlogs);
+  blogRouter.get("/get-featured", BC.getFeaturedPost);
+  blogRouter.get("/get/:id", BC.getBlog);
+  blogRouter.post("/create", auth, BC.CreateBlog);
+  blogRouter.delete("/delete/:id", auth, BC.deleteBlog);
+  blogRouter.patch("/feature", isAdmin, BC.featureBlog);
 
   app.use("/blogs", blogRouter);
 };

@@ -2,81 +2,68 @@ import { blogs } from "../db/model/blogs";
 import { User } from "../db/model/user";
 
 class BlogService {
-  async getAllBlogs(params: any) {
+  async getAll(params: any) {
     try {
-      const pageNumber = Number(params.page) || 1;
+      const skipNumber = Number(params.skip) || 0;
       const limitNumber = Number(params.limit) || 2;
+
       const query: any = {};
 
-      const cat = params.category;
-      const author = params.author;
-      const searchQuery = params.searchQuery;
-      const sortQuery = params.sortQuery;
-      const featured = params.featured;
+      if (params.category) query.category = params.category;
+      if (params.searchQuery)
+        query.title = { $regex: params.searchQuery, $options: "i" };
 
-      if (cat) {
-        query.category = cat;
-      }
-
-      if (searchQuery) {
-        query.title = { $regex: searchQuery, $options: "i" };
-      }
-
-      if (author) {
-        const user = await User.findOne({ username: author }).select("_id");
-
-        if (!user) {
-          return { success: true, data: [], error: "No Blogs Found" };
-        }
-
+      if (params.author) {
+        const user = await User.findOne({ username: params.author }).select(
+          "_id"
+        );
+        if (!user)
+          return {
+            success: true,
+            data: { data: [], hasMore: false, total: 0 },
+            error: null,
+          };
         query.user = user._id;
-        let sortObj: any = { createdAt: -1 };
-
-        if (sortQuery) {
-          switch (sortQuery) {
-            case "newest":
-              sortObj = { createdAt: -1 };
-              break;
-            case "oldest":
-              sortObj = { createdAt: 1 };
-              break;
-            case "popular":
-              sortObj = { visit: -1 };
-              break;
-            case "trending":
-              sortObj = { visit: -1 };
-              query.createdAt = {
-                $gte: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
-              };
-              break;
-            default:
-              break;
-          }
-        }
-
-        if (featured) {
-          query.isFeatured = true;
-        }
-
-        const blog = await blogs
-          .find(query)
-          .populate("user", "username")
-          .sort(sortObj)
-          .limit(limitNumber)
-          .skip((pageNumber - 1) * limitNumber);
-
-        const totalBlogs = await blogs.countDocuments();
-        const hasMore = pageNumber * limitNumber < totalBlogs;
-
-        return {
-          success: true,
-          data: { blogs, hasMore },
-          error: null,
-        };
       }
+
+      const blog = await blogs
+        .find(query)
+        .populate("user", "username")
+        .limit(limitNumber)
+        .skip(skipNumber)
+        .sort({ createdAt: -1 });
+
+      const totalBlogs = await blogs.countDocuments(query);
+
+      const hasMore = skipNumber + limitNumber < totalBlogs;
+      console.log(hasMore, "hasmore");
+
+      return {
+        success: true,
+        data: { data: blog, hasMore, total: totalBlogs },
+        error: null,
+      };
     } catch (error) {
       console.log("Error fetching blogs:", error);
       return { success: false, data: null, error: "Failed to fetch blogs" };
+    }
+  }
+
+  async getFeaturedBlogs() {
+    try {
+      const featuredBlogs = await blogs
+        .find({ isFeatured: true })
+        .populate("user", "username")
+        .sort({ createdAt: -1 })
+        .limit(4);
+      return { success: true, data: featuredBlogs, error: null };
+    } catch (error) {
+      console.log("Error fetching featured blogs:", error);
+      return {
+        success: false,
+        data: null,
+        error: "Failed to fetch featured blogs",
+      };
     }
   }
 
@@ -95,27 +82,15 @@ class BlogService {
 
   async CreateBlog(blogData: any) {
     try {
-      const user = await User.findById(blogData.userId);
-
-      if (!user) {
-        return { success: false, data: null, error: "User not found" };
-      }
-      let slug = blogData.title.replace(/ /g, "-").toLowerCase();
-
-      let existingBlogs = await blogs.findOne({ slug });
-
-      let counter = 2;
-
-      while (existingBlogs) {
-        slug = `${slug}-${counter}`;
-        existingBlogs = await blogs.findOne({ slug });
-        counter++;
-      }
-
-      const newBlogs = new blogs({ user: user._id, slug, ...blogData });
-      const blog = await newBlogs.save();
-
-      return { success: true, data: blog, error: null };
+      const { title, desc, category, userId } = blogData;
+      const newBlog = new blogs({
+        title,
+        desc,
+        category,
+        user: userId,
+      });
+      await newBlog.save();
+      return { success: true, data: newBlog, error: null };
     } catch (error) {
       console.log("Error creating blog:", error);
       return { success: false, data: null, error: "Failed to create blog" };

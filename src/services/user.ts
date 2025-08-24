@@ -1,7 +1,6 @@
-import { JWT_SECRET, JWT_TOKEN } from "../config/config";
+import { JWT_SECRET } from "../config/config";
 import { User } from "../db/model/user";
 import { comparePassword, hashPassword } from "../lib/utils";
-import jwt from "jsonwebtoken";
 
 class UserService {
   async register({
@@ -32,7 +31,7 @@ class UserService {
       const savedUser = await newUser.save();
 
       const tokenData = this.CreateAuthIDs({
-        userID: savedUser._id.toString(),
+        userId: savedUser._id.toString(),
         username: savedUser.username,
         email: savedUser.email,
         role: savedUser.role,
@@ -70,7 +69,7 @@ class UserService {
         return { success: false, data: null, error: "Invalid password" };
       }
       const tokenData = this.CreateAuthIDs({
-        userID: user._id.toString(),
+        userId: user._id.toString(),
         username: user.username,
         email: user.email,
         role: user.role,
@@ -182,13 +181,13 @@ class UserService {
   }
 
   private async CreateAuthIDs({
-    userID,
+    userId,
     username,
     email,
     role,
     expires,
   }: {
-    userID: string;
+    userId: string;
     username: string;
     email: string;
     role: string;
@@ -196,7 +195,7 @@ class UserService {
   }) {
     try {
       const { SignJWT } = await import("jose");
-      const token = await new SignJWT({ userID, username, email, role })
+      const token = await new SignJWT({ userId, username, email, role })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime(expires)

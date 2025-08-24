@@ -35,8 +35,14 @@ class userController {
     });
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
     console.log(data);
+    // res.cookie("accessUserToken", data.data?.token, {
+    //   httpOnly: true,
+    // });
     res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only https in prod
+      sameSite: "strict", // prevent CSRF
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     return res.status(statusCode).json(data);
   }
@@ -49,8 +55,14 @@ class userController {
     }
     const data: any = await this.userService.login({ email, password });
     const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    // res.cookie("accessUserToken", data.data?.token, {
+    //   httpOnly: true,
+    // });
     res.cookie("accessUserToken", data.data?.token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only https in prod
+      sameSite: "strict", // prevent CSRF
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     return res.status(statusCode).json(data);
   }
