@@ -16,7 +16,7 @@ const ExpressApp = (app: Application, server: http.Server) => {
     cors({
       origin: [
         "http://localhost:3000",
-        "rafi-blog-management.vercel.app",
+        "https://rafi-api-blog-management.vercel.app",
       ],
       methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
       credentials: true,
