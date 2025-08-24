@@ -20,6 +20,9 @@ export const UserApi = (app: Application, US: UserService) => {
   app.post("/register", UC.userRegister);
   app.post("/reset-password", auth, UC.resetPassword);
   app.post("/logout", UC.Logout);
+
+  app.get("/profile", auth, UC.getUserProfile);
+  app.post("/update/profile", auth, UC.updateProfile);
 };
 
 export default userRouter;

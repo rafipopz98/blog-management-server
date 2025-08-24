@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../../services/user";
 import {
+  isUserName,
   resetPasswordValidation,
   userLoginValidation,
   userRegisterValidation,
@@ -76,6 +77,25 @@ class userController {
       })
       .status(200)
       .json("User has been logged out successfully");
+  }
+
+  public async getUserProfile(req: Request, res: Response) {
+    const { userId } = req.user;
+    const data = await this.userService.getUserProfile(userId);
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data?.data);
+  }
+
+  public async updateProfile(req: Request, res: Response) {
+    const { username } = req.body;
+    const { error } = isUserName.validate({ username });
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+    const { userId } = req.user;
+    const data = await this.userService.updateProfile({ userId, username });
+    const statusCode = data?.success ? (data.error === null ? 200 : 404) : 400;
+    return res.status(statusCode).json(data?.data);
   }
 }
 export { userController };

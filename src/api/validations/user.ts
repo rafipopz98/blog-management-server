@@ -15,3 +15,7 @@ export const resetPasswordValidation = Joi.object({
   oldPassword: Joi.string().required(),
   newPassword: Joi.string().required(),
 });
+
+export const isUserName = Joi.object({
+  username: Joi.string().required(),
+});

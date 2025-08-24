@@ -125,6 +125,56 @@ class UserService {
     }
   }
 
+  async updateProfile({
+    userId,
+    username,
+  }: {
+    userId: string;
+    username: string;
+  }) {
+    try {
+      const user = await User.findByIdAndUpdate(
+        {
+          _id: userId,
+        },
+        {
+          username,
+        }
+      );
+
+      if (!user) {
+        return { success: true, data: null, error: "No User Found" };
+      }
+      const finalData = {
+        username: user.username,
+        email: user.email,
+        img_id: user.img_id,
+      };
+      return { success: true, data: finalData, error: null };
+    } catch (error) {
+      console.log("Error while updating user profile", error);
+      return { success: false, data: null, error };
+    }
+  }
+
+  async getUserProfile(userId: string) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return { success: true, data: null, error: null };
+      }
+      const finalData = {
+        username: user.username,
+        email: user.email,
+        img_id: user.img_id,
+      };
+      return { success: true, data: finalData, error: null };
+    } catch (error) {
+      console.log("Error while fetching user profile", error);
+      return { success: false, data: null, error };
+    }
+  }
+
   private async CreateAuthIDs({
     userID,
     username,

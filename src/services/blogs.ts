@@ -1,4 +1,4 @@
-import blogs from "../db/model/blogs";
+import { blogs } from "../db/model/blogs";
 import { User } from "../db/model/user";
 
 class BlogService {
