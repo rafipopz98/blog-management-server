@@ -68,7 +68,7 @@ class UserService {
       if (!isPasswordValid) {
         return { success: false, data: null, error: "Invalid password" };
       }
-      const tokenData = this.CreateAuthIDs({
+      const tokenData = await this.CreateAuthIDs({
         userId: user._id.toString(),
         username: user.username,
         email: user.email,
@@ -76,13 +76,17 @@ class UserService {
         expires: "7d",
       });
 
+      const token = tokenData.data;
+
       const finalData = {
         id: user._id,
         username: user.username,
         email,
         role: user.role,
-        token: (await tokenData).data,
+        token: token,
       };
+
+      console.log(token, "token");
 
       return { success: true, data: finalData, error: null };
     } catch (error) {
