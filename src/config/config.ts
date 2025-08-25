@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const PORT = <string>process.env.PORT || 8080;
-export const DB_URL = <string>process.env.DB_URL;
+export const DB_URL = <string>process.env.DB_URL || "mongodb+srv://rafi:rafi@blogs.ei1khrp.mongodb.net/";
 export const JWT_TOKEN = <string>process.env.JWT_TOKEN;
 export const JWT_SECRET = new TextEncoder().encode(JWT_TOKEN);
 export const JWT_ALG = <string>process.env.ALG || "HS256";
