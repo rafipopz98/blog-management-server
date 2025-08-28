@@ -2,13 +2,12 @@ add .env
 
 add these below
 PORT=
-DB_URL=
-JWT_TOKEN = 
+MONGODB_URI=
+JWT_TOKEN =
 ALG = HS256
-EXPIRES_IN = 60 * 60 * 24 * 7
+EXPIRES_IN = 60 _ 60 _ 24 \* 7
 
-to run the server, 
-
+to run the server,
 
 step 1 npm install
 
